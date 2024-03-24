@@ -1,0 +1,122 @@
+# ------------------------------------------------------
+# THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
+# ------------------------------------------------------
+
+type ResponseMessage {
+  statusCode: Int!
+  message: String!
+}
+
+"""Course Object return type"""
+type CourseObject {
+  """when the object was created"""
+  created_at: DateTime!
+
+  """when the object was updated"""
+  updated_at: DateTime!
+
+  """when the object was deleted"""
+  deleted_at: DateTime
+  id: Int!
+  course_name: String!
+  added_at: DateTime!
+  student: StudentObject
+}
+
+"""
+A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date-time format.
+"""
+scalar DateTime
+
+"""Student object type"""
+type StudentObject {
+  """when the object was created"""
+  created_at: DateTime!
+
+  """when the object was updated"""
+  updated_at: DateTime!
+
+  """when the object was deleted"""
+  deleted_at: DateTime
+  id: Int!
+  fullname: String!
+  phone: Int!
+  grade: String!
+  profile_pict: String!
+  is_graduate: Boolean!
+  courses: [CourseObject!]
+  user: UserObject!
+}
+
+"""Return object of user"""
+type UserObject {
+  """when the object was created"""
+  created_at: DateTime!
+
+  """when the object was updated"""
+  updated_at: DateTime!
+
+  """when the object was deleted"""
+  deleted_at: DateTime
+  id: Int!
+  username: String!
+  email: String!
+  password: String!
+  is_active: Boolean!
+  student: StudentObject
+}
+
+type Query {
+  """Find all user with pagination"""
+  findManyUser(skip: Float!, take: Float!): [UserObject!]!
+  hello: String!
+  findAllStudents(skip: Int!, take: Int!): [StudentObject!]!
+  findAllCourse(skip: Int!, take: Int!): [CourseObject!]!
+  findCourseByName(course_name: String!): CourseObject!
+}
+
+type Mutation {
+  """Create user with single request"""
+  createOneUserAndStudent(bodyCreate: CreateUserInput!): UserObject!
+  updatePassword(userId: Int!, data: UpdatePasswordUser!): ResponseMessage!
+  updateAccount(userId: Int!, data: UpdateUserInput!): ResponseMessage!
+  activateUserAccount(userId: Int!): UserObject!
+  deleteOneUser(userId: Float!): ResponseMessage!
+  createOneCourse(bodyToCreate: CreateCourseInput!): CourseObject!
+  updateCourse(courseId: Int!, bodyToUpdate: UpdateCourseInput!): CourseObject!
+}
+
+"""DTO For User Create"""
+input CreateUserInput {
+  username: String!
+  email: String!
+  password: String!
+  student: CreateStudentInput!
+}
+
+"""Create student with single object DTO"""
+input CreateStudentInput {
+  fullname: String!
+  phone: Int!
+  grade: String!
+}
+
+"""Update password user DTO"""
+input UpdatePasswordUser {
+  password: String!
+}
+
+input UpdateUserInput {
+  username: String!
+  email: String!
+  password: String!
+}
+
+"""Course create input"""
+input CreateCourseInput {
+  course_name: String!
+}
+
+input UpdateCourseInput {
+  course_name: String
+}

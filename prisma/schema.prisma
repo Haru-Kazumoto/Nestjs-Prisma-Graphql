@@ -1,0 +1,93 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+generator nestgraphql {
+  provider                              = "node node_modules/prisma-nestjs-graphql"
+  output                                = "../src/@generated"
+  reExport                              = Single
+  fields_Validator_from                 = "class-validator"
+  fields_Validator_input                = true
+  requireSingleFieldsInWhereUniqueInput = true
+  emitSingle                            = true
+  emitCompiled                          = true
+  purgeOutput                           = true
+  noTypeId                              = true
+}
+
+model User {
+  id        Int     @id @default(autoincrement())
+  username  String  @unique
+  email     String  @unique
+  password  String
+  is_active Boolean @default(false)
+
+  // ------------ RELATION -------------- //
+  student Student?
+
+  // ------------ TIMESTAMP ---------------- //
+
+  created_at DateTime  @default(now())
+  updated_at DateTime  @updatedAt
+  deleted_at DateTime?
+
+  @@map("user")
+}
+
+model Student {
+  id           Int      @id @default(autoincrement())
+  fullname     String
+  phone        Int      @unique
+  grade        Grader
+  profile_pict String?  @default("my_pict.jpg")
+  is_graduate  Boolean? @default(false)
+
+  // ------------ RELATION -------------- //
+  user   User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId Int  @unique
+
+  courses Course[]
+
+  // ------------ TIMESTAMP ---------------- //
+  created_at DateTime  @default(now())
+  updated_at DateTime  @updatedAt
+  deleted_at DateTime?
+
+  @@map("student")
+}
+
+model Course {
+  id          Int      @id @default(autoincrement())
+  course_name String
+  added_at    DateTime @default(now())
+
+  // ------------ RELATION -------------- //
+  Student   Student? @relation(fields: [studentId], references: [id])
+  studentId Int?
+
+  // ------------ TIMESTAMP ---------------- //
+  created_at DateTime  @default(now())
+  updated_at DateTime  @updatedAt
+  deleted_at DateTime?
+
+  @@map("course")
+}
+
+// ----------- ENUMERATIONS ------------- //
+
+enum Grader {
+  X
+  XI
+  XII
+}
